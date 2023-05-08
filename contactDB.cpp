@@ -31,6 +31,38 @@ contactDB::contactDB() {
    	
    	// Save connection in object
    	conn = std::move(my_conn);
+	#include <iostream>
+#include <mysql.h>
+
+// function to update a contact by id
+void updateContact(MYSQL* conn, int id, std::string first_name, std::string last_name, std::string email, std::string phone_number, std::string address, std::string city, std::string state, std::string zip, std::string country) {
+    // create the SQL update statement
+    std::string sql = "UPDATE Contacts SET first_name='" + first_name + "', last_name='" + last_name + "', email='" + email + "', phone_number='" + phone_number + "', address='" + address + "', city='" + city + "', state='" + state + "', zip='" + zip + "', country='" + country + "' WHERE id=" + std::to_string(id);
+
+    // execute the SQL statement
+    int status = mysql_query(conn, sql.c_str());
+
+    // check for errors
+    if (status != 0) {
+        std::cout << "Error updating contact: " << mysql_error(conn) << std::endl;
+    }
+    else {
+        std::cout << "Contact updated successfully!" << std::endl;
+    }
+}
+
+int main() {
+    // connect to the MySQL database
+    MYSQL* conn = mysql_init(NULL);
+    mysql_real_connect(conn, "localhost", "username", "password", "database", 0, NULL, 0);
+
+    // call the updateContact function with the new contact details
+    updateContact(conn, 1, "John", "Doe", "johndoe@example.com", "1234567890", "123 Main St", "Anytown", "CA", "12345", "USA");
+
+    // close the database connection
+    mysql_close(conn);
+
+    return 0;
    	
 }
 
